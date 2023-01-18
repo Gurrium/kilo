@@ -6,14 +6,14 @@
 
 #include <ctype.h>
 #include <errno.h>
-#include <time.h>
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/ioctl.h>
 #include <sys/types.h>
-#include <stdarg.h>
 #include <termios.h>
+#include <time.h>
 #include <unistd.h>
 
 /*** difnes ***/
@@ -382,6 +382,9 @@ void editorProcessKeyPress() {
     case ARROW_LEFT:
     case ARROW_RIGHT:
       editorMoveCursor(c);
+      break;
+    default:
+      editorInsertChar(c);
       break;
   }
 }
