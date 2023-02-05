@@ -38,7 +38,7 @@ enum editorKey {
   PAGE_DOWN
 };
 
-enum editorHighlight { HL_NORMAL = 0, HL_NUMBER };
+enum editorHighlight { HL_NORMAL = 0, HL_NUMBER, HL_MATCH };
 
 /*** data ***/
 
@@ -219,7 +219,9 @@ int editorSyntaxToColor(int hl) {
   switch (hl) {
     case HL_NUMBER:
       return 31;
-  default:
+      case HL_MATCH:
+      return 34;
+      default:
       return 37;
   }
 }
@@ -487,6 +489,8 @@ void editorFindCallback(char *query, int key) {
       E.cy = current;
       E.cx = editorRowRxToCx(row, match - row->render);
       E.rowoff = E.numrows;
+
+      memset(&row->hl[match - row->render], HL_MATCH, strlen(query));
       break;
     }
   }
@@ -744,17 +748,17 @@ void editorDrawRows(struct abuf *ab) {
       for (j = 0; j < len; j++) {
         if (hl[j] == HL_NORMAL) {
           if (currnet_color != -1) {
-          abAppend(ab, "\x1b[39m", 5);
-          currnet_color = -1;
-        }
+            abAppend(ab, "\x1b[39m", 5);
+            currnet_color = -1;
+          }
           abAppend(ab, &c[j], 1);
         } else {
           int color = editorSyntaxToColor(hl[j]);
           if (color != currnet_color) {
-          currnet_color = color;
-          char buf[16];
-          int clen = snprintf(buf, sizeof(buf), "\x1b[%dm", color);
-          abAppend(ab, buf, clen);
+            currnet_color = color;
+            char buf[16];
+            int clen = snprintf(buf, sizeof(buf), "\x1b[%dm", color);
+            abAppend(ab, buf, clen);
           }
           abAppend(ab, &c[j], 1);
         }
