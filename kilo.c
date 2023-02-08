@@ -40,7 +40,15 @@ enum editorKey {
 
 enum editorHighlight { HL_NORMAL = 0, HL_NUMBER, HL_MATCH };
 
+#define HL_HIGHLIGHT_NUMBERS (1<<0)
+
 /*** data ***/
+
+struct editorSyntax {
+  char *filetype;
+  char **filematch;
+  int flags;
+};
 
 typedef struct erow {
   int size;
@@ -67,6 +75,16 @@ struct editorConfig {
 };
 
 struct editorConfig E;
+
+/*** filetypes ***/
+
+char *C_HL_expressions[] = {".c", ".h", ".cpp", NULL};
+
+struct editorSyntax HLDB[] = {
+    {"c", C_HL_expressions, HL_HIGHLIGHT_NUMBERS},
+};
+
+#define HLDB_ENTRIES (sizeof(HLDB) / sizeof(HLDB[0]));
 
 /*** prototypes ***/
 
